@@ -44,9 +44,5 @@ function handleMovies(req, res, next) {
 
 app.get('/movie', handleMovies)
 
+module.exports = app;
 
-
-const PORT = 8000
-app.listen(PORT, () => {
-    console.log(`server listening on ${PORT}`)
-})
