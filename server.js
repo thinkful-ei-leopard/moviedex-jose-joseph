@@ -12,7 +12,6 @@ app.use(cors())
 app.use(helmet())
 app.use(function validateBearerToken(req, res, next) {
     const apiToken = process.env.API_KEY
-    console.log(apiToken)
     const authToken = req.get('Authorization')
 
     
@@ -24,19 +23,23 @@ app.use(function validateBearerToken(req, res, next) {
 })
 
 
-
-// Users can search for Movies by genre, country or avg_vote
-// The endpoint is GET /movie
-// The search options for genre, country, and/or average vote are provided in query string parameters.
-// When searching by genre, users are searching for whether the Movie's genre includes a specified string. The search should be case insensitive.
-// When searching by country, users are searching for whether the Movie's country includes a specified string. The search should be case insensitive.
-// When searching by average vote, users are searching for Movies with an avg_vote that is greater than or equal to the supplied number.
-// The API responds with an array of full movie entries for the search results
-
 function handleMovies(req, res, next) {
-    let movies = MOVIES;
+    let { genre, country, avg_vote } = req.query
+    let response = MOVIES;
 
-    res.send(movies)
+    if(genre) {
+        response = response.filter(movie => movie.genre.toLowerCase().includes(req.query.genre.toLowerCase()))
+    }
+
+    if(country) {
+        response = response.filter(movie => movie.country.toLowerCase().includes(req.query.country.toLowerCase()))
+    }
+
+    if(avg_vote) {
+        response = response.filter(movie => Number(movie.avg_vote) >= Number(req.query.avg_vote))
+    }
+
+    res.send(response)
 }
 
 app.get('/movie', handleMovies)
